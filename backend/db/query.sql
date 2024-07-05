@@ -1,20 +1,15 @@
---CREATE A USER TABLE
+USE myappdb;
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  first_name VARCHAR(50),
+  last_name VARCHAR(50),
+  username VARCHAR(50) UNIQUE,
+  password VARCHAR(255)
+);
 
-CREATE TABLE `users`(
-    Id int NOT NULL AUTO_INCREMENT PRIMARY KEY UNIQUE,
-    firstname varchar(255) NOT NULL,
-    lastname varchar(255) NOT NULL,
-    username varchar(255) NOT NULL,
-    user_password varchar(255) NOT NULL
-    
-)
-
-
---CREATE A PRODUCT TABLE
-
-CREATE TABLE `products`(
-    Id int NOT NULL  AUTO_INCREMENT PRIMARY KEY UNIQUE,
-    product_name varchar(255) NOT NULL,
-    product_description varchar(255) NOT NULL,
-    product_price  varchar(255) NOT NULL
-)
+CREATE TABLE products (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  product_name VARCHAR(100),
+  product_description VARCHAR(255),
+  product_price VARCHAR(255)
+);
