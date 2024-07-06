@@ -1,15 +1,15 @@
 USE myappdb;
 CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  first_name VARCHAR(50),
-  last_name VARCHAR(50),
-  username VARCHAR(50) UNIQUE,
+  id SERIAL PRIMARY KEY,
+  firstname VARCHAR(50) NOT NULL,
+  lastname VARCHAR(50) NOT NULL,
+  username VARCHAR(50) UNIQUE NOT NULL,
   password VARCHAR(255)
 );
 
 CREATE TABLE products (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  product_name VARCHAR(100),
-  product_description VARCHAR(255),
-  product_price VARCHAR(255)
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  price VARCHAR(255) NOT NULL
 );

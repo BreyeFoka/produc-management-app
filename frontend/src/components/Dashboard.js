@@ -1,46 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import ProductForm from './ProductForm';
 import ProductList from './ProductList';
-import { fetchProducts, deleteProduct } from '../api/api';
+import { fetchProducts, deleteProduct, updateProduct } from '../api/api';
 
 const Dashboard = ({ setAuth }) => {
-    const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [currentProduct, setCurrentProduct] = useState(null);
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setAuth(false);
-    };
+  useEffect(() => {
+    fetchProductList();
+  }, []);
 
-    const fetchProductList = async () => {
-        try {
-            const response = await fetchProducts();
-            setProducts(response.data);
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        }
-    };
+  const fetchProductList = async () => {
+    try {
+      const productList = await fetchProducts();
+      setProducts(productList);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
 
-    useEffect(() => {
-        fetchProductList();
-    }, []);
+  const handleDeleteProduct = async (id) => {
+    try {
+      await deleteProduct(id);
+      setProducts(products.filter(product => product.id !== id));
+    } catch (error) {
+      console.error('Failed to delete product', error);
+    }
+  };
 
-    const handleDeleteProduct = async (id) => {
-        try {
-            await deleteProduct(id);
-            setProducts(products.filter(product => product.id !== id));
-        } catch (error) {
-            console.error("Failed to delete product", error);
-        }
-    };
+  const handleEditProduct = (product) => {
+    setCurrentProduct(product);
+  };
 
-    return (
-        <div>
-            <h2>Dashboard</h2>
-            <button onClick={handleLogout}>Logout</button>
-            <ProductForm onAddProduct={fetchProductList} />
-            <ProductList products={products} onDeleteProduct={handleDeleteProduct} />
-        </div>
-    );
+  const handleAddProduct = () => {
+    setCurrentProduct(null);
+    fetchProductList(); // Refresh product list after adding/editing
+  };
+
+  return (
+    <div>
+      <h2>Dashboard</h2>
+      <button onClick={handleLogout}>Logout</button>
+      <ProductForm onAddProduct={handleAddProduct} currentProduct={currentProduct} />
+      <ProductList products={products} onEditProduct={handleEditProduct} onDeleteProduct={handleDeleteProduct} />
+    </div>
+  );
 };
 
 export default Dashboard;

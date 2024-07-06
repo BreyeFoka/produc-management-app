@@ -1,42 +1,58 @@
-import React, { useState } from 'react';
-import { addProduct } from '../api/api';
+import React, { useState, useEffect } from 'react';
+import { createProduct, updateProduct } from '../api/api';
 
-const ProductForm = ({ onAddProduct }) => {
-    const [productName, setProductName] = useState('');
-    const [productDescription, setProductDescription] = useState('');
-    const [productPrice, setProductPrice] = useState('');
+const ProductForm = ({ onAddProduct, currentProduct }) => {
+  const [product, setProduct] = useState({ name: '', price: 0 });
+  const [isEditing, setIsEditing] = useState(false);
 
-    const handleAddProduct = async (e) => {
-        e.preventDefault();
-        try {
-            await addProduct({ product_name: productName, product_description: productDescription, product_price: productPrice });
-            setProductName('');
-            setProductDescription('');
-            setProductPrice('');
-            onAddProduct(); // Refresh the product list
-        } catch (error) {
-            console.error("Failed to add product", error);
-        }
-    };
+  useEffect(() => {
+    if (currentProduct) {
+      setProduct({ ...currentProduct });
+      setIsEditing(true);
+    }
+  }, [currentProduct]);
 
-    return (
-        <form onSubmit={handleAddProduct}>
-            <h2>Add Product</h2>
-            <div>
-                <label>Product Name:</label>
-                <input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} />
-            </div>
-            <div>
-                <label>Product Description:</label>
-                <input type="text" value={productDescription} onChange={(e) => setProductDescription(e.target.value)} />
-            </div>
-            <div>
-                <label>Product Price:</label>
-                <input type="text" value={productPrice} onChange={(e) => setProductPrice(e.target.value)} />
-            </div>
-            <button type="submit">Add Product</button>
-        </form>
-    );
+  const handleChange = (e) => {
+    setProduct({ ...product, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (isEditing) {
+        await updateProduct(product.id, product);
+      } else {
+        await createProduct(product);
+      }
+      setProduct({ name: '', price: 0 });
+      setIsEditing(false);
+      onAddProduct();
+    } catch (error) {
+      console.error('Error saving product:', error);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        name="name"
+        value={product.name}
+        onChange={handleChange}
+        placeholder="Product Name"
+        required
+      />
+      <input
+        type="number"
+        name="price"
+        value={product.price}
+        onChange={handleChange}
+        placeholder="Price"
+        required
+      />
+      <button type="submit">{isEditing ? 'Update' : 'Add'} Product</button>
+    </form>
+  );
 };
 
 export default ProductForm;
