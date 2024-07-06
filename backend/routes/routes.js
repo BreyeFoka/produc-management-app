@@ -40,25 +40,24 @@ router.post("/register", (req, res) => {
 });
 
 
-router.get("/login", (req, res) => {
+router.post("/login", (req, res) => {
     const {username, password} = req.body;
     const query = `SELECT * FROM users WHERE username = ?`;
-    db.query(query, [username], (err, result)=>{
-        if(err) throw err;
-        if(result.length > 0){
-            const IsMatch = bcrypt.compareSync(password, result[0].password)
-            if(!IsMatch){
-                return res.json({message: "Invalid email or password"})
-            } else{
-                
-                const token = jwt.sign({id: result[0].id}, JWT, {expiresIn: 86400})
-                res.json({auth: true, token: token})
+    db.query(query, [username], (err, result) => {
+        if (err) return res.status(500).send(err); 
+
+        if (result.length > 0) {
+            const isMatch = bcrypt.compareSync(password, result[0].password);
+            if (!isMatch) {
+                return res.status(401).json({ message: "Invalid email or password" }); 
+            } else {
+                const token = jwt.sign({ id: result[0].id }, JWT, { expiresIn: 86400 });
+                return res.json({ auth: true, token: token }); 
             }
-        }else{
-            res.json({message: "Invalid email or password"})
+        } else {
+            return res.status(401).json({ message: "Invalid email or password" }); 
         }
-        res.json(result)
-    })
+    });
 
 })
 
@@ -101,12 +100,12 @@ router.post("/products", auth, (req, res) => {
  })
 
  router.delete("/products/:id", auth, (req, res) => {
-    const {Id} = req.params;
+    const {id} = req.params;
     const query = `DELETE FROM products WHERE id = ?`;
-    db.query(query, [Id], (err, result)=>{
-        if(err) throw err;
-        res.json(result)
-    })
+    db.query(query, [id], (err, result) => { 
+        if (err) return res.status(500).send(err); 
+        return res.json({ message: "Product deleted", result }); 
+    });
  })
 
 

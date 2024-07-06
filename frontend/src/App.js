@@ -1,25 +1,29 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+// import LoginForm from './components/Login';
+import Register from './components/Register';
+import Dashboard from './components/Dashboard';
 import './App.css';
+import LoginForm from './components/Login';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    const [isAuth, setAuth] = useState(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) setAuth(true);
+    }, []);
+
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={!isAuth ? <Register setAuth={setAuth} /> : <Navigate to="/dashboard" />} />
+                <Route path="/signup" element={!isAuth ? <Register setAuth={setAuth} /> : <Navigate to="/dashboard" />} />
+                <Route path="/dashboard" element={isAuth ? <Dashboard setAuth={setAuth} /> : <Navigate to="/" />} />
+                <Route path="/login" element={!isAuth ? <LoginForm setAuth={setAuth}/> : <Navigate to="/dashboard" /> } />
+            </Routes>
+        </Router>
+    );
+};
 
 export default App;
