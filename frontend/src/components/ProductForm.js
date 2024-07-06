@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { createProduct, updateProduct } from '../api/api';
+import './ProductForm.css'
 
 const ProductForm = ({ onAddProduct, currentProduct }) => {
-  const [product, setProduct] = useState({ name: '', price: 0 });
+  const [product, setProduct] = useState({ name: '', description:'', price: 0 });
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -24,7 +25,7 @@ const ProductForm = ({ onAddProduct, currentProduct }) => {
       } else {
         await createProduct(product);
       }
-      setProduct({ name: '', price: 0 });
+      setProduct({ name: '', description:'', price: 0 });
       setIsEditing(false);
       onAddProduct();
     } catch (error) {
@@ -33,25 +34,38 @@ const ProductForm = ({ onAddProduct, currentProduct }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
+    <form onSubmit={handleSubmit} className="product-form">
+    <input
         type="text"
         name="name"
         value={product.name}
         onChange={handleChange}
         placeholder="Product Name"
+        className="product-input"
         required
-      />
-      <input
+    />
+    <input
+        type="text"
+        name="description"
+        value={product.description}
+        onChange={handleChange}
+        placeholder="Product Description"
+        className="product-input"
+        required
+    />
+    <input
         type="number"
         name="price"
         value={product.price}
         onChange={handleChange}
         placeholder="Price"
+        className="product-input"
         required
-      />
-      <button type="submit">{isEditing ? 'Update' : 'Add'} Product</button>
-    </form>
+    />
+    <button type="submit" className="product-button">
+        {isEditing ? 'Update' : 'Add'} Product
+    </button>
+</form>
   );
 };
 

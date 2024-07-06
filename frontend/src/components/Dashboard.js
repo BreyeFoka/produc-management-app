@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ProductForm from './ProductForm';
 import ProductList from './ProductList';
-import { fetchProducts, deleteProduct, updateProduct } from '../api/api';
+import { fetchProducts, deleteProduct} from '../api/api';
+import './Dashboard.css';
 
 const Dashboard = ({ setAuth }) => {
   const [products, setProducts] = useState([]);
@@ -19,7 +20,10 @@ const Dashboard = ({ setAuth }) => {
       console.error('Error fetching products:', error);
     }
   };
-
+  const handleLogout = () => {
+      localStorage.removeItem('token');
+      setAuth(false);
+  }
   const handleDeleteProduct = async (id) => {
     try {
       await deleteProduct(id);
@@ -39,12 +43,16 @@ const Dashboard = ({ setAuth }) => {
   };
 
   return (
-    <div>
-      <h2>Dashboard</h2>
-      <button onClick={handleLogout}>Logout</button>
-      <ProductForm onAddProduct={handleAddProduct} currentProduct={currentProduct} />
-      <ProductList products={products} onEditProduct={handleEditProduct} onDeleteProduct={handleDeleteProduct} />
-    </div>
+        <div className="dashboard">
+            <header className="dashboard-header">
+                <h2>Dashboard</h2>
+                <button onClick={handleLogout} className="logout-button">Logout</button>
+            </header>
+            <section className="dashboard-content">
+                <ProductForm onAddProduct={handleAddProduct} currentProduct={currentProduct} />
+                <ProductList products={products} onEditProduct={handleEditProduct} onDeleteProduct={handleDeleteProduct} />
+            </section>
+        </div>
   );
 };
 
