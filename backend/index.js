@@ -3,12 +3,14 @@ const cors = require("cors");
 const bodyparser = require("body-parser");
 const db =  require("./db/db");
 const sql = require("mysql");
+const actions = require("./routes/routes")
+
 
 const PORT = process.env.PORT || 5000
 const app = express();
 app.use(bodyparser.json());
 app.use(cors());
-
+app.use("/", actions);
 
 db.connect((err)=>{
     if(err){
